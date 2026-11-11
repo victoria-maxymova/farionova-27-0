@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TravelGo: карта экранов по Project Scope</title>
+<style>
+  :root{
+    --bg:#f6f5f2; --card:#fff; --ink:#1f1f1f; --muted:#6b6b6b; --line:#e4e2dc;
+    --ok:#2e7d4f; --okbg:#e7f4ec; --part:#a16207; --partbg:#fdf3dc; --none:#b42318; --nonebg:#fdeceb;
+    --accent:#4f46e5;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45}
+  header{padding:18px 22px 10px;border-bottom:1px solid var(--line);background:var(--card)}
+  h1{font-size:19px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13px}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:12.5px}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}
+  .d-ok{background:var(--ok)} .d-part{background:#d99a0b} .d-none{background:var(--none)}
+  .tabs{display:flex;gap:6px;margin-top:12px}
+  .tabs button{border:1px solid var(--line);background:var(--bg);padding:6px 12px;border-radius:8px;cursor:pointer;font-size:13px}
+  .tabs button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .wrap{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 140px)}
+  nav{border-right:1px solid var(--line);background:var(--card);padding:10px 8px;overflow:auto}
+  nav h3{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:14px 8px 4px}
+  nav a{display:flex;gap:8px;align-items:center;padding:6px 8px;border-radius:7px;color:var(--ink);text-decoration:none;font-size:13px}
+  nav a:hover{background:var(--bg)}
+  nav a.on{background:#ecebff}
+  nav a .num{color:var(--muted);font-size:11.5px;min-width:30px}
+  main{padding:20px 22px;overflow:auto}
+  .screen{display:grid;grid-template-columns:330px 1fr;gap:24px;align-items:start}
+  .phone{background:#111;border-radius:34px;padding:12px;box-shadow:0 8px 30px rgba(0,0,0,.12)}
+  .phone-in{background:#fafafa;border-radius:24px;min-height:560px;overflow:hidden}
+  .statusbar{height:26px;display:flex;justify-content:space-between;padding:6px 18px 0;font-size:11px;color:#444}
+  .appbar{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid #eee;background:#fff}
+  .back{width:26px;height:26px;border-radius:50%;border:1.5px dashed var(--none);color:var(--none);display:flex;align-items:center;justify-content:center;font-size:13px;flex:none}
+  .appbar .ttl{font-weight:600;font-size:13.5px}
+  .els{padding:10px;display:flex;flex-direction:column;gap:7px}
+  .el{background:#fff;border:1px solid #e9e9e9;border-left:4px solid;border-radius:9px;padding:7px 9px;font-size:12.5px;cursor:default}
+  .el.ok{border-left-color:var(--ok)} .el.part{border-left-color:#d99a0b} .el.none{border-left-color:var(--none);background:var(--nonebg)}
+  .el.link{cursor:pointer}
+  .el.link:hover{box-shadow:0 0 0 2px #c7c4ff}
+  .el .n{color:var(--muted);font-size:11px;margin-right:4px}
+  .el .go{float:right;color:var(--accent);font-size:11.5px}
+  .missing-el{border:1.5px dashed var(--none);background:transparent;color:var(--none);border-radius:9px;padding:6px 9px;font-size:12px}
+  .panel h2{font-size:18px;margin:0 0 2px}
+  .panel .src{color:var(--muted);font-size:12.5px;margin-bottom:14px}
+  .row{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px}
+  .row .head{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+  .row .head b{font-size:13.5px}
+  .badge{font-size:11px;padding:1px 7px;border-radius:20px;white-space:nowrap}
+  .b-ok{background:var(--okbg);color:var(--ok)} .b-part{background:var(--partbg);color:var(--part)} .b-none{background:var(--nonebg);color:var(--none)}
+  .row .note{color:#333;margin-top:4px;font-size:13px}
+  .targets{margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+  .chip{border:1px solid #c7c4ff;background:#f3f2ff;color:var(--accent);border-radius:20px;padding:1px 9px;cursor:pointer;font-size:12px}
+  .chip.miss{border-color:#f3b8b3;background:var(--nonebg);color:var(--none)}
+  .gaps{background:var(--nonebg);border:1px solid #f3c9c5;border-radius:10px;padding:10px 14px;margin-top:16px}
+  .gaps h4{margin:0 0 6px;color:var(--none);font-size:13.5px}
+  .gaps ul{margin:0;padding-left:18px}
+  .gaps li{margin:3px 0}
+  .info{background:#eef2ff;border:1px solid #d6dbff;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:13px}
+  /* overview */
+  .flow{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+  .flow h3{margin:0 0 10px;font-size:15px}
+  .chain{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+  .node{border:1px solid var(--line);border-left:4px solid;border-radius:8px;padding:6px 10px;background:#fff;cursor:pointer;font-size:12.5px}
+  .node.ok{border-left-color:var(--ok)} .node.part{border-left-color:#d99a0b} .node.none{border-left-color:var(--none);border-style:dashed;border-left-style:solid;color:var(--none);background:var(--nonebg)}
+  .arr{color:var(--muted)}
+  .q{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .q > div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .q h4{margin:0 0 6px;font-size:13.5px}
+  .q ul{margin:0;padding-left:18px} .q li{margin:3px 0}
+  .yes{color:var(--ok)} .no{color:var(--none)}
+  @media (max-width:900px){
+    .wrap{grid-template-columns:1fr}
+    nav{border-right:none;border-bottom:1px solid var(--line);max-height:220px}
+    .screen{grid-template-columns:1fr}
+    .phone{max-width:340px;margin:0 auto}
+    .q{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>TravelGo: карта экранов по Project Scope</h1>
+  <div class="sub">PMP Ирины Быковой. Мобильное приложение iOS / Android. Всё ниже построено только по тексту Scope: что там написано и чего там нет.</div>
+  <div class="legend">
+    <span><i class="dot d-ok"></i>Описано</span>
+    <span><i class="dot d-part"></i>Есть, но не описано, что делает / какой тип / куда ведёт</span>
+    <span><i class="dot d-none"></i>Экрана или функции в Scope нет</span>
+    <span>→ <i>серым курсивом</i>: куда ведёт по логике, хотя в Scope это не написано</span>
+  </div>
+  <div class="tabs">
+    <button id="t-overview" onclick="go('overview')">Общая карта</button>
+    <button id="t-screens" onclick="go('main')">Экраны по шагам</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav id="nav"></nav>
+  <main id="main"></main>
+</div>
+
+<script>
+const S = {}; // screens by id
+const groups = [];
+function grp(name, list){ groups.push({name, ids:list.map(s=>s.id)}); list.forEach(s=>S[s.id]=s); }
+
+grp('Главная и навигация', [
+ {id:'main', num:'1', title:'Головна сторінка / Main page', status:'part', root:true,
+  els:[
+   {n:'1.1', t:'Logo TravelGo', s:'part', note:'Не указано, нажимается ли логотип и что происходит.'},
+   {n:'1.2', t:'Search / пошук', s:'none', note:'Ничего не описано: что ищем (города, отели?), какой это элемент, куда ведут результаты. Непонятно, чем отличается от 1.3.'},
+   {n:'1.3', t:'Quick Search: вкладки Flights / Trains / Hotels', s:'part', note:'Поля перечислены (откуда, куда, дата, пассажиры…), но без типа элемента: поле с автоподсказкой, календарь, счётчик. Не указано, какая вкладка открыта по умолчанию. Нет Round Trip, класса поезда и количества номеров, хотя в 6.1 / 7.1 / 8.1 они есть.'},
+   {n:'1.3', t:'Кнопка Search', s:'part', to:['f-results','t-results','h-results'], assumed:true, note:'Что нажимается, написано, а куда ведёт, нет. По логике на результаты выбранного типа.'},
+   {n:'1.4', t:'Banner + Explore Now / Book Now', s:'none', to:['x-offer'], note:'Ведёт «до відповідної пропозиції», но такой страницы в Scope нет. Один баннер или карусель, тоже не указано.'},
+   {n:'1.5', t:'Popular Destinations (карточки городов)', s:'none', to:['x-destination'], note:'Ведёт на «інформацію про обраний напрям», но страницы направления в Scope нет.'},
+   {n:'1.6', t:'Recommended Offers → View Offer', s:'none', to:['x-offer'], note:'Ведёт на детали предложения, а этой страницы нет. На основе чего рекомендации, тоже не указано.'},
+   {n:'1.7', t:'Navigation to Flights', s:'part', to:['f-search'], assumed:true, note:'Написано: «перенаправляє на сторінку Flights». Страницы с названием Flights в Scope нет. Ближе всего раздел 6.1 (форма поиска рейсов). Где этот элемент на главной, не указано; дублирует вкладку 1.3 и таб-бар 3.2.'},
+   {n:'1.8', t:'Navigation to Trains', s:'part', to:['t-search'], assumed:true, note:'То же самое: «сторінки Trains» нет, ближе всего 7.1.'},
+   {n:'1.9', t:'Navigation to Hotels', s:'part', to:['h-search'], assumed:true, note:'То же самое: «сторінки Hotels» нет, ближе всего 8.1.'}
+  ],
+  gaps:['Страница предложения (на неё ведут 1.4 и 1.6)','Страница направления (на неё ведёт 1.5)','Сердечко «в избранное» на карточках направлений и предложений']
+ },
+ {id:'topbar', num:'2', title:'Верхня панель / Top Navigation Menu', status:'part', note:'В Scope названа «Шапка сайту / Header»: это термин сайта. Красный текст из шаблона не удалён.',
+  els:[
+   {n:'2.1', t:'Logo TravelGo', s:'part', note:'Действие не указано.'},
+   {n:'2.2', t:'Menu Icon (Dropdown Menu)', s:'none', to:['x-menu'], note:'Пункты меню не перечислены, поэтому непонятно, что в нём.'},
+   {n:'2.3', t:'Icon Notifications', s:'none', to:['x-notifications'], note:'Экрана уведомлений в Scope нет; какие уведомления, не указано.'},
+   {n:'2.4', t:'Icon My Account / Profile', s:'part', to:['account'], assumed:true, note:'Куда ведёт, не написано. Что видит гость (без входа), тоже.'},
+   {n:'2.5', t:'Icon Language Selection', s:'part', note:'Языки указаны (EN, UA, ZH). Как выбирается (список, радиокнопки) и где, не указано.'},
+   {n:'2.6', t:'Button Login / Sign Up (для гостя)', s:'part', to:['login'], assumed:true, note:'Куда ведёт, не написано.'}
+  ],
+  gaps:['Кнопка «Назад» на внутренних экранах: не упоминается нигде в Scope','Содержимое меню 2.2']
+ },
+ {id:'tabbar', num:'3', title:'Нижня панель / Tab Bar', status:'part', note:'В Scope названа «Підвал сайту / Footer»: в приложении футера нет, это таб-бар. Красный список из шаблона не удалён.',
+  els:[
+   {n:'3.1', t:'Home (в Scope: «Logo TravelGo головна сторінка»)', s:'ok', to:['main']},
+   {n:'3.2', t:'Flights: пошук та бронювання авіаквитків', s:'ok', to:['f-search'], assumed:true},
+   {n:'3.3', t:'Trains: пошук та бронювання залізничних квитків', s:'ok', to:['t-search'], assumed:true},
+   {n:'3.4', t:'Hotels: пошук та бронювання готелів', s:'ok', to:['h-search'], assumed:true},
+   {n:'3.5', t:'My Bookings: перегляд та управління бронюваннями', s:'part', to:['account'], assumed:true, note:'Тот же экран, что 5.7 в кабинете? Что видит гость? Что значит «управління» (отмена, изменение)?'}
+  ],
+  gaps:['Вкладки или раздела «Избранное» нет','Terms & Conditions и Privacy Policy были только в удалённом футере: теперь их негде открыть']
+ }
+]);
+
+grp('Вход и кабинет', [
+ {id:'register', num:'4.1', title:'Реєстрація / Registration', status:'part',
+  els:[
+   {n:'4.1.1–4.1.6', t:'First Name, Last Name, Email, Phone, Password, Confirm Password', s:'ok', note:'Валидация есть. Не указано: алфавит имён, как выбирается код страны.'},
+   {n:'4.1.7', t:'Checkbox Terms & Conditions', s:'part', to:['x-terms'], note:'Где читать сами условия, не указано.'},
+   {n:'4.1.8', t:'Button Create Account', s:'part', to:['main'], assumed:true, note:'Что после: письмо 11.1, подтверждение email, автовход? Что если email уже есть?'},
+   {n:'4.1.9', t:'Link Login', s:'ok', to:['login']}
+  ],
+  gaps:['Кнопка «Назад» / закрыть']
+ },
+ {id:'login', num:'4.2', title:'Логін / Login', status:'part',
+  els:[
+   {n:'4.2.1–4.2.2', t:'Email, Password', s:'part', note:'Валидации нет, сообщения об ошибке входа нет.'},
+   {n:'4.2.3', t:'Checkbox Remember Me', s:'ok'},
+   {n:'4.2.4', t:'Button Login', s:'part', to:['main'], assumed:true, note:'Куда после входа, не указано (на главную или обратно к бронированию?).'},
+   {n:'4.2.5', t:'Link Forgot Password', s:'ok', to:['recovery']},
+   {n:'4.2.6', t:'Link Create Account', s:'ok', to:['register']}
+  ], gaps:[]
+ },
+ {id:'recovery', num:'4.3', title:'Відновлення паролю / Password Recovery', status:'part',
+  els:[
+   {n:'4.3.1', t:'Email', s:'part', note:'Валидации нет.'},
+   {n:'4.3.2', t:'Button Send Reset Link', s:'part', to:['x-newpass'], note:'Письмо 11.2 есть, а экрана ввода нового пароля, на который ведёт ссылка из письма, нет.'},
+   {n:'4.3.3', t:'Link Back to Login', s:'ok', to:['login']}
+  ], gaps:['Экран «Новый пароль»']
+ },
+ {id:'account', num:'5', title:'Особистий кабінет / My account', status:'part',
+  els:[
+   {n:'5.1–5.5', t:'Profile Information: First Name, Last Name, Email, Phone', s:'ok', note:'5.2–5.5 по смыслу поля внутри 5.1 (нумерация 5.1.1…).'},
+   {n:'5.6', t:'Button Edit Profile', s:'part', to:['x-editprofile'], note:'Что редактируется и как сохраняется, не указано.'},
+   {n:'5.7', t:'My Bookings', s:'part', note:'Что в списке (номер, тип, даты, статус), не указано. Это единственное место с «моими» рейсами, поездами и отелями: внутри разделов Flights / Trains / Hotels их нет.'},
+   {n:'5.8', t:'Booking History', s:'part', note:'Чем отличается от 5.7 (активные / прошлые?), не указано.'},
+   {n:'5.9', t:'Booking Details', s:'part', note:'Что внутри и какие действия (отмена, скачать билет, поддержка), не указано.'},
+   {n:'5.10', t:'Payment Information', s:'part', note:'Что хранится, не указано (карты хранить не рекомендуем).'},
+   {n:'5.11', t:'Change Password', s:'part', note:'Поля не перечислены.'},
+   {n:'5.12', t:'Logout', s:'part', to:['main'], assumed:true, note:'Подтверждение и куда после выхода, не указано.'}
+  ],
+  gaps:['Избранное (сохранённые рейсы, поезда, отели)','Оставить отзыв о поездке','Кнопка «Назад»']
+ }
+]);
+
+grp('Авиа (Flights)', [
+ {id:'f-search', num:'6.1', title:'Пошук авіаквитків / Search flights', status:'part', note:'Раздел 6 называется «Каталог / Catalog», но в нём только авиа. По сути это и есть «страница Flights», на которую ведут 1.7 и 3.2, хотя в Scope так не написано.',
+  els:[
+   {n:'6.1.1', t:'Trip Type: One Way / Round Trip', s:'part', note:'Тип элемента и значение по умолчанию не указаны.'},
+   {n:'6.1.2–6.1.3', t:'From, To', s:'part', note:'Валидация есть; что это поле с автоподсказкой из списка, не указано.'},
+   {n:'6.1.4–6.1.5', t:'Departure Date, Return Date', s:'part', note:'Валидация есть; что это календарь, не указано.'},
+   {n:'6.1.6', t:'Passengers information (количество 1–9)', s:'part', note:'Счётчик? Взрослые / дети? Класса (Economy / Business) нет.'},
+   {n:'6.1.7', t:'Button Search Flights', s:'ok', to:['f-results'], assumed:true}
+  ],
+  gaps:['Мои забронированные рейсы: внутри Flights их нет (только общий 5.7 в кабинете)','Недавние поиски / история поиска','Кнопка «Назад»']
+ },
+ {id:'f-results', num:'6.2', title:'Результати пошуку / Flight Search Results', status:'part',
+  els:[
+   {n:'6.2.1–6.2.10', t:'Карточка рейса: Airline, Flight Number, аэропорты, время, длительность, пересадки, багаж, Price', s:'ok'},
+   {n:'6.2.11', t:'Button Select Flight', s:'ok', to:['f-details'], assumed:true, note:'Для Round Trip: как выбирается обратный рейс, не указано.'},
+   {n:'6.2.12–6.2.16', t:'Фільтри: Price, Airlines, Stops, Departure Time, Baggage', s:'part', note:'Как открываются и тип каждого фильтра (ползунок, чекбоксы), не указано. Нет Apply / Reset.'},
+   {n:'6.2.17–6.2.19', t:'Сортування: Price, Duration, Departure Time', s:'part', note:'Сортировка по умолчанию не указана.'}
+  ],
+  gaps:['Сердечко «сохранить рейс в избранное»','Что показываем, если ничего не найдено','Кнопка «Назад» (к форме поиска)']
+ },
+ {id:'f-details', num:'6.3', title:'Деталі рейсу / Flight Details', status:'part',
+  els:[
+   {n:'6.3.1–6.3.9', t:'Airline, Flight Number, вылет / прилёт, длительность, Stops, Baggage, Fare Conditions, Total Price', s:'ok', note:'Что входит в Fare Conditions (возврат, обмен), не указано.'},
+   {n:'6.3.10', t:'Button Continue / Book', s:'part', to:['f-passenger', 'login'], assumed:true, note:'Если пользователь не вошёл: просим логин или бронирование без регистрации? Не указано.'}
+  ],
+  gaps:['Сердечко «в избранное»','Кнопка «Назад»']
+ },
+ {id:'f-passenger', num:'6.4', title:'Дані пасажира / Passenger Information', status:'part',
+  els:[
+   {n:'6.4.1–6.4.7', t:'First Name, Last Name, Date of Birth, Nationality, Passport, Email, Phone', s:'part', note:'Валидации нет. Как заполнять на нескольких пассажиров, не указано. Email / Phone дублируют 9.3.'},
+   {n:'6.4.8', t:'Button Continue to Checkout', s:'ok', to:['checkout']}
+  ], gaps:['Кнопка «Назад»']
+ }
+]);
+
+grp('Поезда (Trains)', [
+ {id:'t-search', num:'7.1', title:'Пошук квитків на потяги / Search trains', status:'part', note:'По сути это «страница Trains» из 1.8 и 3.3.',
+  els:[
+   {n:'7.1.1–7.1.4', t:'From, To, Departure Date, Passengers', s:'part', note:'Валидация есть, тип элементов не указан.'},
+   {n:'7.1.5', t:'Travel Class', s:'part', note:'Какие классы и какой элемент, не указано.'},
+   {n:'7.1.6', t:'Button Search Trains', s:'ok', to:['t-results'], assumed:true}
+  ],
+  gaps:['Мои билеты на поезд внутри раздела (только общий 5.7)','Недавние поиски','Кнопка «Назад»']
+ },
+ {id:'t-results', num:'7.2', title:'Результати пошуку / Train Search Results', status:'part',
+  els:[
+   {n:'7.2.1–7.2.10', t:'Карточка поезда: компания, номер, станции, время, длительность, места, класс, Price', s:'ok'},
+   {n:'7.2.11', t:'Button Select Train', s:'ok', to:['t-select'], assumed:true},
+   {n:'7.2.12–7.2.15', t:'Фільтри: Price, Train Company, Departure Time, Travel Class', s:'part', note:'Тип и способ открытия не указаны.'},
+   {n:'7.2.16–7.2.18', t:'Сортування: Price, Duration, Departure Time', s:'part', note:'Сортировка по умолчанию не указана.'}
+  ],
+  gaps:['Сердечко «в избранное»','Пустой результат','Кнопка «Назад»']
+ },
+ {id:'t-select', num:'7.3', title:'Вибір поїзда / Train Selection', status:'part',
+  els:[
+   {n:'7.3.1–7.3.3', t:'Train Information, Travel Class, Available Seats', s:'ok'},
+   {n:'7.3.4', t:'Seat Selection', s:'part', note:'Как выбирается место (схема вагона?), не указано.'},
+   {n:'7.3.5', t:'Passenger Information', s:'part', note:'Поля и валидация не указаны (у авиа это отдельный экран 6.4).'},
+   {n:'7.3.6', t:'Total Price', s:'ok'},
+   {n:'7.3.7', t:'Button Continue to Checkout', s:'ok', to:['checkout']}
+  ], gaps:['Кнопка «Назад»']
+ }
+]);
+
+grp('Отели (Hotels)', [
+ {id:'h-search', num:'8.1', title:'Бронювання готелів / Hotel search', status:'part', note:'По сути это «страница Hotels» из 1.9 и 3.4. Назван «бронювання», хотя это поиск.',
+  els:[
+   {n:'8.1.1–8.1.5', t:'Destination, Check-in, Check-out, Guests, Rooms', s:'part', note:'Валидация есть (максимум гостей нет), тип элементов не указан.'},
+   {n:'8.1.6', t:'Button Search Hotels', s:'ok', to:['h-results'], assumed:true}
+  ],
+  gaps:['Мои бронирования отелей внутри раздела (только общий 5.7)','Недавние поиски','Кнопка «Назад»']
+ },
+ {id:'h-results', num:'8.2', title:'Результати пошуку / Hotel Search Results', status:'part',
+  els:[
+   {n:'8.2.1–8.2.9', t:'Карточка отеля: название, фото, локация, рейтинг, отзывы, тип номера, цены, отмена', s:'ok'},
+   {n:'8.2.10', t:'Button View Hotel', s:'ok', to:['h-details'], assumed:true},
+   {n:'8.2.11–8.2.16', t:'Фільтри: Price Range, Rating, Hotel Category, Location, Amenities, Free Cancellation', s:'part', note:'Чем Rating отличается от Hotel Category и что такое Location, не указано.'},
+   {n:'8.2.17–8.2.20', t:'Сортування: Price, Rating, Distance, Recommended', s:'part', note:'Distance от чего и логика Recommended не указаны.'}
+  ],
+  gaps:['Сердечко «нравится этот отель» и список избранных отелей','Пустой результат','Кнопка «Назад»']
+ },
+ {id:'h-details', num:'8.3', title:'Сторінка готелю / Hotel Details', status:'part',
+  els:[
+   {n:'8.3.1', t:'Hotel Photos', s:'part', note:'Галерея / полноэкранный просмотр не указаны.'},
+   {n:'8.3.2–8.3.10', t:'Name, Address, Rating, Reviews, Description, Amenities, Available Rooms, Room Prices, Cancellation', s:'ok', note:'Отзывы можно только читать; оставить свой отзыв нельзя.'},
+   {n:'8.3.11', t:'Button Select Room', s:'ok', to:['h-room'], assumed:true}
+  ],
+  gaps:['Сердечко «в избранное»','Оставить отзыв','Кнопка «Назад»']
+ },
+ {id:'h-room', num:'8.4', title:'Вибір номера / Room Selection', status:'part',
+  els:[
+   {n:'8.4.1–8.4.7', t:'Room Type, Guests, Bed Type, Amenities, цены, Cancellation Policy', s:'part', note:'Что здесь выбирается, а что просто информация (Bed Type, Guests), не указано.'},
+   {n:'8.4.8', t:'Button Book Room', s:'ok', to:['checkout']}
+  ], gaps:['Кнопка «Назад»']
+ }
+]);
+
+grp('Оплата и после', [
+ {id:'checkout', num:'9', title:'Оформлення замовлення / Checkout', status:'part',
+  els:[
+   {n:'9.1–9.6', t:'Booking Summary, Passenger / Guest, Contact, Price Details, Taxes, Total', s:'part', note:'Данные пассажиров уже введены в 6.4 / 7.3.5: здесь просмотр или редактирование? Промокода / бонусов нет.'},
+   {n:'9.7', t:'Payment Method', s:'part', note:'Какие способы (Apple Pay, Google Pay, карта) и какая платёжная система, не указано.'},
+   {n:'9.8–9.11', t:'Cardholder Name, Card Number, Expiration, CVV', s:'ok', note:'Валидация есть.'},
+   {n:'9.12', t:'Checkbox Terms & Conditions', s:'part', to:['x-terms']},
+   {n:'9.13', t:'Button Pay / Confirm Booking', s:'part', to:['thankyou','x-payfail'], assumed:true, note:'Успех ведёт на 10 (по порядку разделов). Что при ошибке оплаты, не указано.'}
+  ], gaps:['Экран ошибки оплаты','Кнопка «Назад»']
+ },
+ {id:'thankyou', num:'10', title:'Сторінка подяки / Thank You Page', status:'part',
+  els:[
+   {n:'10.1–10.8', t:'Success Message, Booking Number, тип, детали, дата, направление, сумма, статус оплаты', s:'ok'},
+   {n:'10.9', t:'Button View Booking', s:'part', to:['account'], assumed:true, note:'Куда ведёт, не написано (логично 5.9).'},
+   {n:'10.10', t:'Button Back to Home', s:'ok', to:['main']}
+  ], gaps:['Рекомендации «для следующей покупки» упомянуты текстом из шаблона, но не пронумерованы']
+ },
+ {id:'support', num:'12', title:'Підтримка / Support', status:'part', note:'Вход в этот раздел нигде не указан: ни в меню, ни в таб-баре.',
+  els:[
+   {n:'12.1', t:'FAQ', s:'part', note:'Как выглядит (список с раскрытием), не указано.'},
+   {n:'12.2', t:'Contact Support', s:'part', note:'Что это: чат, телефон, контакты? Не указано.'},
+   {n:'12.3–12.7', t:'Форма: Name, Email, Subject, Message', s:'ok', note:'Валидация есть.'},
+   {n:'12.8', t:'Button Send Request', s:'part', note:'Что видит пользователь после отправки, не указано.'}
+  ], gaps:['Откуда пользователь попадает в поддержку','Кнопка «Назад»']
+ },
+ {id:'emails', num:'11', title:'E-mail розсилка (не экран)', status:'ok',
+  els:[
+   {n:'11.1–11.5', t:'Registration, Password Recovery, Booking Confirmation, Payment Confirmation, Booking Information', s:'ok', note:'Чем 11.5 отличается от 11.3, не указано. Push-уведомлений в Scope нет совсем.'}
+  ], gaps:[]
+ },
+ {id:'admin', num:'13', title:'Адмін-панель (не в приложении)', status:'ok',
+  els:[
+   {n:'13.1–13.12', t:'Login, Dashboard, управление пользователями, бронированиями, рейсами, поездами, отелями, оплатами, контентом', s:'ok', note:'Решено: готовая адмін-панель. Какая именно и какие роли, не указано.'}
+  ], gaps:[]
+ }
+]);
+
+grp('Нет в Scope (на них ведут кнопки)', [
+ {id:'x-offer', num:'—', title:'Страница предложения / Offer Details', status:'none', missing:true, from:['main'], note:'На неё ведут баннер 1.4 и карточки 1.6.'},
+ {id:'x-destination', num:'—', title:'Страница направления / Destination', status:'none', missing:true, from:['main'], note:'На неё ведут карточки 1.5.'},
+ {id:'x-notifications', num:'—', title:'Уведомления / Notifications', status:'none', missing:true, from:['topbar'], note:'На неё ведёт иконка 2.3.'},
+ {id:'x-menu', num:'—', title:'Содержимое меню', status:'none', missing:true, from:['topbar'], note:'Иконка 2.2 есть, пунктов меню нет.'},
+ {id:'x-newpass', num:'—', title:'Новый пароль / Reset Password', status:'none', missing:true, from:['recovery'], note:'На него ведёт ссылка из письма 11.2.'},
+ {id:'x-editprofile', num:'—', title:'Редактирование профиля', status:'none', missing:true, from:['account'], note:'На него ведёт 5.6.'},
+ {id:'x-terms', num:'—', title:'Terms & Conditions / Privacy Policy', status:'none', missing:true, from:['register','checkout'], note:'Чекбоксы 4.1.7 и 9.12 есть, а самих текстов негде открыть.'},
+ {id:'x-payfail', num:'—', title:'Ошибка оплаты', status:'none', missing:true, from:['checkout'], note:'Что видит пользователь, если 9.13 не прошла.'},
+ {id:'x-favorites', num:'—', title:'Избранное / Favorites', status:'none', missing:true, from:[], note:'Сердечка на рейсах, поездах и отелях нет нигде, списка избранного тоже.'},
+ {id:'x-review', num:'—', title:'Оставить отзыв', status:'none', missing:true, from:['h-details','account'], note:'В Vision есть «система відгуків», в Scope отзывы можно только читать.'}
+]);
+
+const lbl = {ok:'описано', part:'не до конца', none:'нет в Scope'};
+
+function nav(active){
+  let h='';
+  groups.forEach(g=>{
+    h+=`<h3>${g.name}</h3>`;
+    g.ids.forEach(id=>{const s=S[id];
+      h+=`<a href="#${id}" class="${id===active?'on':''}"><i class="dot d-${s.status}"></i><span class="num">${s.num}</span>${s.title}</a>`;});
+  });
+  document.getElementById('nav').innerHTML=h;
+}
+function chip(id){const s=S[id]; return `<span class="chip ${s.missing?'miss':''}" onclick="go('${id}')">${s.num!=='—'?s.num+' ':''}${s.title}</span>`;}
+
+function screen(id){
+  const s=S[id];
+  let phone='';
+  if(s.missing){
+    phone=`<div class="els"><div class="missing-el">Этого экрана в Scope нет.<br>Какие на нём элементы, неизвестно.</div></div>`;
+  } else {
+    phone='<div class="els">'+s.els.map(e=>{
+      const link=e.to&&e.to.length===1;
+      return `<div class="el ${e.s} ${link?'link':''}" ${link?`onclick="go('${e.to[0]}')"`:''}><span class="n">${e.n}</span>${e.t}${e.to?`<span class="go">→</span>`:''}</div>`;
+    }).join('')+(s.gaps||[]).map(g=>`<div class="missing-el">нет: ${g}</div>`).join('')+'</div>';
+  }
+  const back = s.root||s.missing?'':'<span class="back" title="Кнопки «Назад» в Scope нет">←</span>';
+  let panel=`<h2>${s.num!=='—'?s.num+'. ':''}${s.title}</h2><div class="src">${s.missing?'Экран, которого нет в Scope':'Раздел Scope '+s.num}</div>`;
+  if(s.note) panel+=`<div class="info">${s.note}</div>`;
+  if(s.missing){
+    if(s.from&&s.from.length) panel+=`<div class="row"><b>На этот экран ведут:</b><div class="targets">${s.from.map(chip).join('')}</div></div>`;
+  } else {
+    s.els.forEach(e=>{
+      panel+=`<div class="row"><div class="head"><span class="badge b-${e.s}">${lbl[e.s]}</span><b>${e.n} ${e.t}</b></div>`;
+      if(e.note) panel+=`<div class="note">${e.note}</div>`;
+      if(e.to) panel+=`<div class="targets">${e.assumed?'<i>по логике ведёт на:</i>':'ведёт на:'} ${e.to.map(chip).join('')}</div>`;
+      panel+='</div>';
+    });
+    if(s.gaps&&s.gaps.length) panel+=`<div class="gaps"><h4>Чего нет на этом экране</h4><ul>${s.gaps.map(g=>`<li>${g}</li>`).join('')}</ul></div>`;
+  }
+  return `<div class="screen"><div class="phone"><div class="phone-in"><div class="statusbar"><span>9:41</span><span>TravelGo</span></div><div class="appbar">${back}<span class="ttl">${s.title.split(' / ')[0]}</span></div>${phone}</div></div><div class="panel">${panel}</div></div>`;
+}
+
+function node(id){const s=S[id]; return `<span class="node ${s.status}" onclick="go('${id}')">${s.num!=='—'?s.num+' ':''}${s.title.split(' / ')[0]}</span>`;}
+const A='<span class="arr">→</span>';
+function overview(){
+  const flows=[
+    ['Авиа', ['main','f-search','f-results','f-details','f-passenger','checkout','thankyou']],
+    ['Поезда', ['main','t-search','t-results','t-select','checkout','thankyou']],
+    ['Отели', ['main','h-search','h-results','h-details','h-room','checkout','thankyou']],
+    ['Главная → контент', ['main','x-offer']],
+    ['Главная → направления', ['main','x-destination']],
+    ['Вход', ['login','recovery','x-newpass']],
+    ['Кабинет', ['topbar','account','x-editprofile']]
+  ];
+  let h=`<div class="q">
+   <div><h4>Что есть в разделах Flights / Trains / Hotels</h4><ul>
+    <li class="yes">Форма поиска (6.1 / 7.1 / 8.1)</li>
+    <li class="yes">Результаты с фильтрами и сортировкой</li>
+    <li class="yes">Детали рейса / выбор поезда / страница отеля и номера</li>
+    <li class="yes">Переход к оплате, затем страница «Спасибо»</li></ul></div>
+   <div><h4>Чего нет нигде в Scope</h4><ul>
+    <li class="no">Отдельной «страницы Flights / Trains / Hotels», на которую ведут 1.7–1.9 (есть только формы поиска 6.1 / 7.1 / 8.1)</li>
+    <li class="no">Мои забронированные рейсы, поезда, отели внутри этих разделов (есть только общий список 5.7 в кабинете)</li>
+    <li class="no">Недавние поиски / история поиска</li>
+    <li class="no">Кнопка «Назад» ни на одном экране</li>
+    <li class="no">Сердечко «в избранное» и список избранного</li>
+    <li class="no">Страницы предложения, направления, уведомлений, нового пароля, ошибки оплаты, Terms / Privacy</li></ul></div>
+  </div><h2 style="font-size:16px;margin:22px 0 10px">Пути пользователя</h2>`;
+  flows.forEach(([n,ids])=>{h+=`<div class="flow"><h3>${n}</h3><div class="chain">${ids.map(node).join(A)}</div></div>`;});
+  h+=`<div class="sub">Нажми на любой экран, чтобы открыть его разбор.</div>`;
+  return h;
+}
+
+function go(id){ location.hash=id; }
+function render(){
+  const id=(location.hash||'#overview').slice(1);
+  const ov = id==='overview' || !S[id];
+  document.getElementById('t-overview').classList.toggle('on',ov);
+  document.getElementById('t-screens').classList.toggle('on',!ov);
+  nav(ov?null:id);
+  document.getElementById('main').innerHTML = ov?overview():screen(id);
+  document.getElementById('main').scrollTop=0;
+}
+window.addEventListener('hashchange',render);
+render();
+</script>
+</body>
+</html>
