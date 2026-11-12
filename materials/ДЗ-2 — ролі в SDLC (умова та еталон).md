@@ -1,0 +1,32 @@
+# ДЗ 2 — Життєвий цикл проєкту і ролі в SDLC (Блок 2)
+
+## Умова (зі слів куратора)
+1. **На яких етапах бере участь кожна роль?** Розподілити всі ролі по етапах SDLC: Conceptualize, Discover, Specify, Construct, Validate, Deliver, Run. Кожна роль — під тими етапами, де вона залучена й працює.
+2. **З якого боку виступає кожна роль?** Замовник / виконавець / обидва боки.
+
+## Таблиця-відповідь від куратора (без змін, 12.11.2026)
+
+| Роль | Бік | Етапи |
+|---|---|---|
+| Executive Sponsor — спонсор, людина, яка насичує проект фінансами | замовник | Inception (Conceptualize, Discover, Specify) |
+| Salesman — продажник, що шукає замовників | виконавець | Conceptualize, Discover, Specify |
+| Project Manager — відповідальна особа за проект | виконавець | Усі етапи (в ідеалі) або ж починаючи з Specify–Run |
+| Program Manager — менеджер, керуючий групою проектів | замовник/виконавець | Усі етапи |
+| Project Portfolio Manager — керуючий портфелем проектом | виконавець | Conceptualize |
+| Product Manager — знає ринок, пропонує замовнику потрібний функціонал та впроваджує його | виконавець | Усе, крім Construct |
+| Business Analyst — визначає написання вимог | замовник/виконавець | Discover, Specify, Validate |
+| System Analyst — визначає написання вимог до системи | виконавець | Specify, Construct, Validate |
+| Subject-matter expert (SME) — людина, яка знається на конкретній сфері | замовник | Discover, Specify, Validate |
+| Architect — спеціаліст з архітектури, вибору інструментів, технологій | виконавець | Construct, Validate |
+| Development Team — розробники, тімліди | виконавці | Construct, Validate, Deliver |
+| Quality Assurance (QA) — вибирають процеси та інструменти для тестування, щоб запобігти помилкам | виконавці | Specify, Construct, Validate, Deliver |
+| Quality Control (QC) — тестують, виявляють помилки, контролюють усунення, складають кейси | виконавці | Validate, Deliver |
+| Configuration Manager — налаштовує оточення, складає збірки | виконавець | Construct, Validate, Deliver |
+| Analyst — перевіряє коректність збору метрик, підбиває результат про успішність проекту/продукту | замовник/виконавець | Discover, Validate |
+| Professional Services — тестують продукт поза командою | виконавці | Validate, Deliver |
+| Support Team — підтримка, супровід продукту | виконавці | Deliver, Run |
+| UI team — дизайнери, верстальники, юзабілісти | виконавці | Discover, Specify, Construct, Validate |
+| End User — кінцевий користувач | виконавець ⚠️ | Deliver, Run |
+| Software Engineering Process Group (SEPG) — аналіз процесів, їх змін | виконавці | — (не вказано) |
+
+⚠️ Питання до куратора: End User у таблиці позначений як «виконавець» — схоже на описку (кінцевий користувач зазвичай на боці замовника). SEPG — етапи не вказані.
