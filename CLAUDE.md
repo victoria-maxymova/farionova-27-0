@@ -81,7 +81,7 @@
 - **Ролі SDLC:** Executive Sponsor, Salesman, Project / Program / Portfolio Manager, Product Manager, Business та System Analyst, SME, Architect, Dev Team, QA, QC, Configuration Manager, Analyst, Professional Services, Support Team, UI team, End User, SEPG.
 
 ## ДЗ 2 (ролі в SDLC)
-Звіряти **тільки** з офіційними відповідями в `materials/ДЗ-2 — ролі в SDLC (умова та еталон).md`. Стиль коментарів до ДЗ 2 — прямі пояснення «де працює роль → що додати/змінити» (рішення куратора).
+Звіряти **тільки** з офіційними відповідями в `materials/ДЗ-2 — ролі в SDLC (умова та еталон).md`. **Етапи звіряти за позначками I / D / R** (Inception / Development / Run) в еталоні (оригінал з кольорами — `materials/ДЗ-2 — еталон (оригінал з кольорами I-D-R).pdf`). UI team і Professional Services на Inception — приймаємо, але не вимагаємо (рішення куратора, 13.11.2026). Стиль коментарів до ДЗ 2 — прямі пояснення «де працює роль → що додати/змінити» (рішення куратора).
 
 ## 9. PMP: Project Scope (HW 6) — перевіряти «як справжню розробку», по кожному пункту
 - **Поля:** тип UI-елемента (поле з автопідказкою, date picker, stepper, випадаючий список, радіокнопки, чекбокси, перемикач, повзунок), обов'язковість, валідація по кожному полю (довжина, символи, алфавіт).
